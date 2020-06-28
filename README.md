@@ -1,1 +1,1 @@
-# Machine-Learning-Coursera
+# EECS-738-Labs
