@@ -1,0 +1,64 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Jul 10 00:14:26 2017
+
+@author: Madhu
+"""
+# Import libraries necessary for this project
+import sklearn
+import numpy  as np
+print "-----------------------------------------------------------------------"
+print('The scikit-learn version is {}.'.format(sklearn.__version__))
+#get the working directory and filename
+path = r'C:\Users\pmspr\Documents\HS\MS\Sem 2\EECS 738\Lab\1\Work\Code\Data'
+
+#load data using load class and print describe of data
+from projectFunctions import loadData
+filename = "MotorInsuranceFraudClaimABTFull.csv"
+col_names = ['Id', 'InsuranceType', 'Income', 'status', 'claimants', 'Injury', 
+             'HospitalStay', 'ClaimAmt', 'TotalClaimed', 'NumberClaims', 
+             'NumSoftTissues', 'PerSoftTissue','AmtRecieved','FraudFlag']
+data = loadData(path,filename)
+
+# Success - Display the first record
+if data is not None:
+    data.columns = col_names
+    display(data.head(n=1))
+    str(data)
+
+#explore the data
+from projectFunctions import exploreData
+exploreData(data)
+#
+drop_col = ['Id','InsuranceType','status','FraudFlag']
+features_raw = data.drop(drop_col, axis = 1)
+target_raw = data['FraudFlag']
+#if features_raw is not None:
+#    display(features_raw.head(n=1))
+    
+#transform data
+from projectFunctions import transformData
+features,target = transformData(features_raw,target_raw)
+features['NumSoftTissues'] = np.nan_to_num(features['NumSoftTissues'])
+ 
+#shuffle and split the data to create train and test datasets
+from projectFunctions import splitData
+X_train, X_test, y_train, y_test = splitData(features,target,0.3)
+ 
+from projectFunctions import decTree,drawTree
+sample_size = len(X_train)
+feature_cols = features.columns
+
+#Usin gini and depth = 3 
+results,learner = decTree(sample_size, X_train, y_train, X_test, y_test, 'gini', 5)
+drawTree(learner,feature_cols, 'ifraud_gini.png')
+print "Times for Training, Prediction: %.5f, %.5f" %(results['train_time'], results['pred_time'])     
+print "Accuracy for Training, Test sets: %.5f, %.5f" %(results['acc_train'], results['acc_test'])     
+print "-----------------------------------------------------------------------"
+
+#Usin entropy and depth = 3 
+results,learner = decTree(sample_size, X_train, y_train, X_test, y_test, 'entropy', 5)
+drawTree(learner,feature_cols, 'ifraud_etropy.png')
+print "Times for Training, Prediction: %.5f, %.5f" %(results['train_time'], results['pred_time'])     
+print "Accuracy for Training, Test sets: %.5f, %.5f" %(results['acc_train'], results['acc_test'])     
+print "-----------------------------------------------------------------------"

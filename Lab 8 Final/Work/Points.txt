@@ -1,0 +1,126 @@
+Question 1 - Look back over your labs that you did in the second half of the year.  Name three important things that you learned.  Give details on which lab and what was the effect. If you learned nothing from any lab, explain three things that you could have learned from better labs.
+--------------
+(1) Back propagation - Lab 3:
+
+This is an algorithm that uses gradient descent, an efficient technique, for computing the gradients automatically. It is used to train the neural network. 
+
+A neural network make predictions during its forward pass. During forward pass, neuron weights are calculated to make the predictions and these intermediate results are preserved. 
+
+After the predictions are made, algorithm computes how much each output connection contributed to the prediction error. This is done automatically by applying chain rule working backward until the algorithm reaches the input layer. This reverse pass efficiently measures the error gradient across all the connection weights in the network by propagating the error gradient backward through the network. Finally the algorithm performs a gradient descent step to tweak all the connection weights in the network, using the error gradients it just computed. In order to use gradient descent, we use an activation function that can be differentiated upon like sigmoid, tanh(z) and Relu functions. 
+
+(2) Batch normalization - Lab 4
+
+Gradients are often get smaller and smaller as the algorithm progresses down to the lower layers. As a result gradient descent update leave the lower layers' connection weights virtually unchanged and training never converges to a good prediction. This is the vanishing gradient problem. Other aspect of this problem is the gradients can grow bigger until layers get larger weights and the algorithm diverges.
+
+Reason behind this behavior is the activation function and the initialization scheme make the variance of the input layers much lesser than that of output layers. This variance increases till the activation function is saturated at top layers. When activation function saturates between 0 and 1, the derivative becomes close to zero. Thus, when back propagation is started, this little gradient gets reduced so there is really nothing left for the lower layers.
+
+To handle vanishing gradient problem, we can use different initialization techniques like Golrot and He Initialization, using non-saturating activation functions. Although initialization methods can significantly reduce the problem of vanishing/exploding gradients at the beginning of training, it does not guarantee that it will not appear during training. This operation zero-centers and normalizes each input and then scales and shifts the result using two parameter vectors per layer: one for scaling, the other for shifting. This technique lets the model learn the optimal scale and mean of each of the layers' inputs.  Adding batch normalization layer as the very first layer for neural network, will standardize the training set. However, this technique add some complexity to the model. There could be an overhead of extra runtime, but it is possible to fuse the BN layer with the previous layer, after training, thereby avoiding the runtime penalty. 
+
+(3)Attention mechanisms - Lab 6
+
+In language  processing, representation of an important word (along with all the other words) needs to be carried over many steps before it is actually used. This is useful in meaningful translations. Normal recurrent neural networks take longer paths to train such data. Attention mechanisms are used to make this path shorter. This allows the decoder to focus (attention) on the appropriate words (as encoded by the encoder) at each time step. This means that the path from an input word to its translation is now much shorter, so the short-term memory limitations of RNNs have much less impact. Attention mechanisms revolutionized neural machine translation allowing a significant improvement in the state of the art especially for long sentences. 
+
+In this mechanism, instead of just sending encoder's final hidden state to the decoder, all of its outputs are sent to the decoder. At each time step, the decoder's memory cell computes a weighted sum of all these encoder outputs: this determines which words it will focus on at this step.  The weight w(t,i) is the weight of the i'th encoder output at the t'th decoder time step. For example, if the weight w(3,2) is much larger than the weights w(3,0) and w(3,1), then the decoder will pay much more attention to the other two words, at least at this time step. The rest of the decoder works just like earlier: at each time step the memory cell receieves the  inputs plus the hidden state from the previous time step and finally it receives the target word from  the previous time step. 
+----------------------------
+Question 2 - You are given new tabular data in an excel spreadsheet with multiple categories of features. After doing data cleaning, discuss three machine learning approaches that may work well, and rank them in order of difficulty. Then rank them in order of expected accuracy. 
+----------
+Covid data is a gathered over a period of time. This data can be considered as a multivariate time-series data. We have three features, Confirmed, Deaths and Recovered that are varying in the given period of time. For time series data forecasting, we use RNN, CNN and MLP Dense layers.
+
+Recurrent Neural Network:
+
+A recurrent neural network looks very much like a feed forward neural network, except the fact that it also has connections pointing backward. Each neuron, in the network, receives inputs. producing an output, and sending that output back to itself. At each time-step t, this recurrent neuron receives the inputs as well as its own output from the previous time-step. Since there is no previous output at the first time-step, it is generally set to zero. If Wx and Wy are two weights of input and output vector respectively, then we can put output of a recurrent layer for a single neuron as Yt = activation function (Wx * X + Wy * Yt-1) + b) . As the output of a recurrent neuron, at time step t, is a function of all the inputs from previous time steps, we could say it has a form of memory. An RNN can simultaneously take a sequence of inputs and produce a sequence of output. This type of sequence-to-sequence network is useful for predicting time series such as covid data. 
+
+Convoluted neural network:
+
+For time series, the convolution filter will have width same as the time series and the length can be varied. This way filter moves in one direction from the start to the end of the time series to compute the convolution. Here we are using 1D convolution filter. This 1D convolution layer is followed by a pooling layer which filters the output of the previous layer. This pooling layer will be follwed by a dense fully connected layer that interprets the features extracted by the pooling layer. For time series, CN does not view the data as having time steps, instead, it is treated as a sequence over which convolution read operations can be performed , like a 1D image. One Drawback for this technique is not having previous output information for present computation. This will have an effect on the prediction. 
+
+Neural network with Dense layers:
+
+Multi layer perceptron neural networks with fully connected dense layers can also be used for time series data. But, not having features that we have in RNN and CNN will effect the accuracy and MSE of the prediction. 
+
+Order of Difficulty: 1 being most difficult out of three models
+
+(1) RNN (2) CNN (3) fully connected Dense layer 
+
+Order of expected accuracy: 1 being most accurate out of three models
+
+(1) RNN (2) CNN (3) fully connected Dense layer
+----------------------------------
+Question 3 - Discuss ResNets in comparison to CNNs.  What are the strengths or weaknesses of each method?
+------------------
+Convolution layer:
+
+In this layer neurons are not connected to every single pixel in the input image, but only to pixels in their receptive fields. In turn, each neuron in the second convolutional layer is  connected only to neurons located within a small rectangle in the first layer. This architecture allows the network to concentrate on small low-level features in the first hidden layer, then assemble them into larger higher-level features in the next hidden layer, and so on. This hierarchical structure is common in real-world images, which is one of  the reasons why CNNs work so well for image recognition. 
+
+ResNets:
+
+ResNet is one of the CNN architecture. The key to being able to train a deep network is to use skip connections. A skip connection is a signal feeding in to a layer is also added to the output of a layer located a bit higher up the stack. When training a neural network, the goal is to make it model a target function h(x). If we add the input x to the output of the network then the network will be forced to model f(x) = h(x) - x rather than h(x). This is residual learning. The deep residual network can be seen as a stack of residual units, where each residual unit is a small neural network with a skip connection. 
+
+Advantages of ResNet over conventional CNN:
+
+1) When we initialize a regular neural network, its weights are close to zero, so the network just outputs value close to zero. Adding skip connections makes network just outputs a copy of its inputs. This will speed up training considerably. 
+
+2) Adding skip connections makes network progress even if several layers have not started learning yet. Skip connection signal can easily make its way across the whole network.  
+------------------------
+Question 4 - Describe a future research project that you think that you could do with machine learning and why you think that it is interesting (different from your group project). Three paragraph maximum. 
+--------------
+I am interested in the concept of video tagging. Idea is to understand a video and determine the appropriate tag labels for  the video. This is a complex problem of involving feature extraction from the sequence of images created from the video and creating the correlations between the labels of the long sequence of the images. We can use google provided youtube-8M dataset to train our model. ﻿﻿﻿﻿﻿As the dataset is huge, pre-trained features were derived from the dataset. Around 1.6 billion video features were extracted by google and it is available online for public usage. 
+The paper, on this concept, proposed a method using CNN and RNN. We will design a convoluted layer to analyze the available pre-trained features to determine a set of labels. While training, we select from the set of ground truth labels with the highest confidence for the given video. In the next step, we use a LSTM cell which will feed on the output of labels provided by CNN. Video can be conceived as a sequence of single images which can be treated as time series data. At each time step t, this LSTM cell outputs a vector of output features. This set of features will be concatenated with the features provided by CNN and we train further to come  up with final set of labels for the video. 
+This is project is different, from final group project, from domain standpoint. Our final project deals with stock prices which is also a time-series data. This project deals with a different set of problems related to Video classification. 
+------------------------
+Question 5 - You are asked to help predict the spread of coronavirus in Kansas using machine learning.  You are provided with tabular data on different countries and states as provided in blackboard. Describe an approach that you could use to help predict the spread.  Extra credit: use the data provided to make a rough prediction for Kansas and email it to the professor.
+--------------
+As this is a time series data, I would like to implement the prediction using Recurrent neural networks. Please find below the approach.
+
+Feature engineering:
+
+1. Read the data from multiple csv files.
+
+2. We do not need columns like latitude, longitude, FIPS, Admin2. Drop the columns and merge all the dataframes as a vertical stack.
+
+3. Remove the missing values and divide the column of last updated in to date and time. 
+
+4. If we need to forecast for individual state, group by the dataset by country and state. Create a time series data using last updated column with columns Confirmed, Deaths and Recovered as features.
+
+Model:
+
+1. Divide the data in train and test dataset.
+
+2 Create a LSTM recurrent neural network using Keras.layers.LSTM with return_sequences = true.
+
+3. Shape the input data appropriately and fit the model using training and with a validation split.
+
+4. Determine the  accuracies for the trained model. As we have less data and less number of dimensions, there is a chance of overfitting. 
+---------------------
+Question 6 - You are given stationary camera video data with some labels from the airport.  You are asked to find people who drop their suitcase and leave. Outline your approach.  As an incomplete example, “make a CNN to find all of the suitcases using ImageNet”
+------------------------
+We can achieve this using openCV
+
+1. We use openCV to divide the video in to individual frames.
+
+2. Each frame, found in the above step, is converted in to an image. This image is treated to remove the noise. 
+
+3. We can use openCV in built functions to do a static analysis of the image to perform image segmentation and determine the list of objects. 
+
+4. Create a CNN that is trained on the images having a suitcase. We can use a labeled dataset having images with suitcases. We will train the model on ImageNet.
+
+5. Create a pipeline to subject each image, from the video, to CNN and identify the suitcase. Mark the object with in a frame.
+
+6. Reconstruct the video from the processed images to have the suitcases identified. We can extend by creating a heatmap for the people who are near to the suitcase.
+----------------------
+Question 7 - What approach is commonly used for machine translation of language?
+-------------
+Recurrent neural networks with attention mechanism
+-----------
+Question 8 - You are asked in an interview about what is the largest machine learning project you have worked on and what was your role.  Using your group project as an example, describe what your team did, your role in your group project, and what you accomplished.  Describe what you would do better in a future project. 
+-----------------
+I have worked on building code for
+
+(a) Data acquisition by scrapping the public data using Quandl to get the stock prices. ﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿
+
+(b) Organizing data  to keep concise and deal with missing data, I concatenated all the price data of the selected items above to a single dataframe
+(c) Build the model using python in build arima model using pyramid library.
+
+(d) I was able to get insights in the domain for stock price data and Arima model.
+
+For future scope, I would chose a contemporary methods to design the solutions. 

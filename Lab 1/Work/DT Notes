@@ -1,0 +1,52 @@
+Day Outlook 	Temp. 	Humidity 	Wind 	Play?
+1   Sunny 		Hot 	High 		Weak 	No
+2 	Sunny 		Hot 	High 		Strong 	No
+3 	Overcast 	Hot 	High 		Weak 	Yes
+4 	Rain 		Mild 	High 		Weak 	Yes
+5 	Rain 		Cool 	Normal 		Weak 	Yes
+6 	Rain 		Cool 	Normal 		Strong 	No
+7 	Overcast 	Cool 	Normal 		Strong 	Yes
+8 	Sunny 		Mild 	High 		Weak 	No
+9 	Sunny 		Cool 	Normal 		Weak 	Yes
+10 	Rain 		Mild 	Normal 		Weak 	Yes
+11 	Sunny 		Mild 	Normal 		Strong 	Yes
+12 	Overcast 	Mild 	High 		Strong 	Yes
+13 	Overcast 	Hot 	Normal 		Weak 	Yes
+14 	Rain 		Mild 	High 		Strong 	No
+
+
+S = total dataset
+Number of classifications of target variable = 2 = [Yes, No]
+No of [Yes} = 9
+No of [No]  = 5
+Total values of target variable = 9 + 5 = 14
+
+Entropy(S) = -Pyes*log(Pyes) - Pno*log(Pno)
+		   = -(9/14)*log(9/14) - (5/14)*log(5/14)
+		   = 0.94
+
+Entropy of the attribute Outlook - 
+Different values of Outlook = [Sunny, Overcast, Rain]
+Ssunny = [2Yes, 3Nos] 
+Total values = 2 +3 = 5
+Entropy(Ssunny) = -(2/5)*log(2/5) - (3/5)*log(3/5) = 0.972
+
+Sovercast = [4Yes, 0Nos]
+Total values = 4
+Entropy(Sovercast) = -(4/4)*log(4/4) - 0 = 0 (since log1 = 0)
+
+Srain = [3Yes, 2Nos]
+Total values = 3 + 2 = 5
+Entropy(Srain) = -(3/5)*log(3/5) - (2/5)*log(2/5) = 0.972
+
+Information Gain at attribute A = Gain(S,A) = Entropy(S) - sum[ (Sv/S)*Entropy(Sv) ] 
+Where v = unique values of the attribute = [Sunny, Overcast, Rain]
+
+Gain(S, Outlook) = 0.94 - [ (5/14)*0.972 + (4/14)*0 + (5/14)*0.972] = 0.245
+
+Similarly
+Gain(S, Temperature) = 0.29
+Gain(S, Humidity)    = 0.152
+Gain(S, Wind)  		 = 0.48
+
+
